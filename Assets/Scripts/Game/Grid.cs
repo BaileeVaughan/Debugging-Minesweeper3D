@@ -6,7 +6,7 @@ namespace Minesweeper3D
 {
     public class Grid : MonoBehaviour
     {
-        public GameObject tiePrefab; // Prefab to spawn
+        public GameObject tilePrefab; // Prefab to spawn
         public int width = 10, height = 10, depth = 10; // Grid dimensions
         public int mineCount = 5;
         public float spacing = 1.1f; // Spacing between each tile
@@ -16,22 +16,22 @@ namespace Minesweeper3D
         Tile SpawnTile(Vector3 position)
         {
             // Clone the tile prefab
-            GameObject clone = InstantiatetilePrefab, transform);
+            GameObject clone = Instantiate(tilePrefab, transform);
             // Edit it's properties
             clone.transform.position = position;
             // Return the Tile component of clone
-            return clone.GetComponent<Tie>();
+            return clone.GetComponent<Tile>();
         }
         void GenerateTiles()
         {
             // Instantiate the new 3D array of size width x height x depth
-            tiles = new Tile[with, height, depth];
+            tiles = new Tile[width, height, depth];
 
             // Store half the size of the grid
-            Vector3 halfSize = new Vecto3(width * .5f, height * .5f, depth * .5f);
+            Vector3 halfSize = new Vector3(width * .5f, height * .5f, depth * .5f);
 
             // Offset
-            Vector3 offset = new Vecto3(.5f, .5f, .5f);
+            Vector3 offset = new Vector3(.5f, .5f, .5f);
             
             // Loop through the entire list of tiles
             for (int x = 0; x < width; x++)
@@ -45,11 +45,11 @@ namespace Minesweeper3D
                                                        y - halfSize.y,
                                                        z - halfSize.z);
                         // Offset position to center
-                        position += offset
+                        transform.position += offset;
                         // Apply spacing
-                        position *= spacing;
+                        transform.position *= spacing;
                         // Spawn a new tile
-                        Tile newTile = SpawnTile(position);
+                        Tile newTile = SpawnTile(transform.position);
                         // Store coordinates
                         newTile.x = x;
                         newTile.y = y;
@@ -68,7 +68,7 @@ namespace Minesweeper3D
         bool IsOutOfBounds(int x, int y, int z)
         {
             return x < 0 || x >= width ||
-                   y < 0 || y >= hht ||
+                   y < 0 || y >= height ||
                    z < 0 || z >= depth;
         }
         int GetAdjacentMineCount(Tile tile)
@@ -83,14 +83,14 @@ namespace Minesweeper3D
                     for (int z = -1; z <= 1; z++)
                     {
                         // Calculate which adjacent tile to look at
-                        int desiredX tile.x + x;
+                        int desiredX = tile.x + x;
                         int desiredY = tile.y + y;
                         int desiredZ = tile.z + z;
                         // Check if the desired x & y is outside bounds
                         if (IsOutOfBounds(desiredX, desiredY, desiredZ))
                         {
                             // Continue to next element in the loop
-                            ctinue;
+                            continue;
                         }
                         // Select current tile
                         Tile currentTile = tiles[desiredX, desiredY, desiredZ];
@@ -238,7 +238,7 @@ namespace Minesweeper3D
         // Raycasts to find a hit tile
         void MouseOver()
         {
-            if (Input.GetMouseBu tonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 Tile hitTile = GetHitTile(Input.mousePosition);
                 if (hitTile)
@@ -258,7 +258,7 @@ namespace Minesweeper3D
         // Update is called once per frame
         void Update()
         {
-            MousOver();
+            MouseOver();
         }
     }
 
